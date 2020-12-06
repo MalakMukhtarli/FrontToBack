@@ -24,6 +24,10 @@ namespace FiorelloFrontToBack
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession(option =>
+            {
+                option.IdleTimeout = TimeSpan.FromSeconds(20);
+            });
             services.AddControllersWithViews();
             services.AddDbContext<AppDbContext>(option => {
                 option.UseSqlServer(_config["ConnectionString:Default"]);
@@ -38,6 +42,7 @@ namespace FiorelloFrontToBack
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseSession();
             app.UseStaticFiles();
             app.UseRouting();
 

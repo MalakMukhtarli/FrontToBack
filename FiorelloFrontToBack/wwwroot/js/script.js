@@ -3,7 +3,7 @@ $(document).ready(function () {
     let proCount = $('#count').val();
     $(document).on('click', '#loadMore', function () {
         $.ajax({
-            url: '/Product/LoadMore?skip='+skip,
+            url: '/Product/LoadMore?skip=' + skip,
             type: 'GET',
             success: function (res) {
                 $('#productsBack').append(res);
@@ -34,12 +34,23 @@ $(document).ready(function () {
                 //    $('#productsBack').append(mainDiv);
                 //}
                 skip += 8;
-                if (proCount<=skip) {
+                if (proCount <= skip) {
                     $('#loadMore').remove();
                 }
             }
         })
-    })
+    });
+
+    //$(document).on('click', '#deleted', function () {
+    //    
+    //    $.ajax({
+    //        url: '/Home/RemoveBasketData?id=',
+    //        type: 'Get',
+    //        success: function (resp) {
+    //            console.log(resp);
+    //        }
+    //    })
+    //});
 
     // HEADER
 
