@@ -11,7 +11,6 @@ namespace FiorelloFrontToBack.ViewModel
         public List<Slider> Sliders { get; set; }
         public SliderContent SliderContent { get; set; }
         public List<Category> Categories { get; set; }
-        public List<Product> Products { get; set; }
         public About About { get; set; }
         public List<AboutSubtitleList> AboutSubtitleLists { get; set; }
         public List<SectionHeader> SectionHeaders { get; set; }

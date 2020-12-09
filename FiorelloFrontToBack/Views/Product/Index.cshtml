@@ -5,7 +5,8 @@
 
 <div class="container">
     <div class="row" id="productsBack">
-        <partial name="_ProductPartial"/>
+        @*<partial name="_ProductPartial"/>*@
+        @await Component.InvokeAsync("Product", 8)
     </div>
     <div class="row my-5 justify-content-center">
         <input type="hidden" id="count" value="@ViewBag.ProCount" />

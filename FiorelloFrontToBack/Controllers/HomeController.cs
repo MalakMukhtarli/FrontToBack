@@ -28,7 +28,6 @@ namespace FiorelloFrontToBack.Controllers
                 Sliders = _db.Sliders.ToList(),
                 SliderContent=_db.SliderContents.FirstOrDefault(),
                 Categories = _db.Categories.Where(c=>c.IsDeleted==false).ToList(),
-                Products = _db.Products.Take(8).Include(p=>p.Category).Where(p => p.IsDeleted == false).ToList(),
                 About = _db.Abouts.FirstOrDefault(),
                 AboutSubtitleLists = _db.AboutSubtitleLists.ToList(),
                 SectionHeaders = _db.SectionHeaders.ToList(),

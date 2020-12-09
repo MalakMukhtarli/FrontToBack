@@ -21,5 +21,6 @@ namespace FiorelloFrontToBack.DAL
         public DbSet<AboutSubtitleList> AboutSubtitleLists { get; set; }
         public DbSet<Expert> Experts { get; set; }
         public DbSet<Blog> Blogs { get; set; }
+        public DbSet<Bio> Bios { get; set; }
     }
 }
