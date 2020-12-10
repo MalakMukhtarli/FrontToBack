@@ -15,5 +15,7 @@ namespace FiorelloFrontToBack.Models
         public string Image { get; set; }
         [NotMapped,Required]
         public IFormFile Photo { get; set; }
+        [NotMapped, Required]
+        public IFormFile[] Photos { get; set; }
     }
 }

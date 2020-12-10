@@ -1,4 +1,6 @@
 ﻿using FiorelloFrontToBack.DAL;
+using FiorelloFrontToBack.Extensions;
+using FiorelloFrontToBack.Helpers;
 using FiorelloFrontToBack.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,6 +26,7 @@ namespace FiorelloFrontToBack.Areas.Admin.Controllers
         // GET: SliderController
         public ActionResult Index()
         {
+            ViewBag.SliderCount = _context.Sliders.Count();
             return View(_context.Sliders.ToList());
         }
 
@@ -45,35 +48,68 @@ namespace FiorelloFrontToBack.Areas.Admin.Controllers
         // POST: SliderController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Slider slider)
+        public async Task<IActionResult> Create(Slider sliders)
         {
-            if (slider.Photo == null)
+            #region File
+            //if (slider.Photo == null)
+            //{
+            //    return View(slider);
+            //}
+            //bool isExist = slider.Photo.IsImage();
+            //if (!isExist)
+            //{
+            //    ModelState.AddModelError("Photo", "Zehmet olmasa shekil tipinde file sechin");
+            //    return View(slider);
+            //}
+            //bool photoLength = slider.Photo.PhotoLength(200);
+            //if (!photoLength)
+            //{
+            //    ModelState.AddModelError("Photo", "Zehmet olmasa sheklin olchusu 200kb kechmesin");
+            //    return View(slider);
+            //}
+            //int sliderCount = _context.Sliders.Count();
+            //if (sliderCount >= 5)
+            //{
+            //    ModelState.AddModelError("", "5den artiq shekil yukleye bilmersiniz");
+            //    return View(slider);
+            //}
+
+            //slider.Image = await slider.Photo.AddImageAsync(_env.WebRootPath, "img");
+            //await _context.Sliders.AddAsync(slider);
+            #endregion
+
+            #region Multiple
+            if (sliders.Photos == null)
             {
                 return View();
             }
-
-            bool isExist = slider.Photo.ContentType.Contains("image/");
-            if (!isExist)
+            int sliderCount = _context.Sliders.Count();
+            if (sliderCount + sliders.Photos.Length > 5)
             {
-                ModelState.AddModelError("Photo", "Zehmet olmasa shekil tipinde file sechin");
+                ModelState.AddModelError("Photos", "Butul filelarin sayi 5i keche bilmez!");
                 return View();
             }
-
-            if ((slider.Photo.Length / 1024)>200)
+            foreach (IFormFile slider in sliders.Photos)
             {
-                ModelState.AddModelError("Photo", "Zehmet olmasa sheklin olchusu 200kb kechmesin");
-                return View();
+                if (!slider.IsImage())
+                {
+                    ModelState.AddModelError("Photos", "Zehmet olmasa shekil tipinde file sechin");
+                    return View(slider);
+                }
+                bool photoLength = slider.PhotoLength(200);
+                if (!photoLength)
+                {
+                    ModelState.AddModelError("Photos", "Zehmet olmasa sheklin olchusu 200kb kechmesin");
+                    return View(slider);
+                }
+                Slider newSlider = new Slider();
+                newSlider.Image = await slider.AddImageAsync(_env.WebRootPath, "img");
+                await _context.Sliders.AddAsync(newSlider);
             }
+          
+            
+            #endregion
 
-            string PhotoName = Guid.NewGuid().ToString() + slider.Photo.FileName;
-            string path = Path.Combine(_env.WebRootPath, "img", PhotoName);
-            using (FileStream fileStream = new FileStream(path, FileMode.Create))
-            {
-                await slider.Photo.CopyToAsync(fileStream);
-            }
-
-            slider.Image = PhotoName;
-            await _context.Sliders.AddAsync(slider);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -97,14 +133,14 @@ namespace FiorelloFrontToBack.Areas.Admin.Controllers
                 return View();
             }
             if (id == null) return NotFound();
-            bool isExist = slider.Photo.ContentType.Contains("image/");
+            bool isExist = slider.Photo.IsImage();
             if (!isExist)
             {
                 ModelState.AddModelError("Photo", "Zehmet olmasa shekil tipinde file sechin");
                 return View();
             }
-
-            if ((slider.Photo.Length / 1024) > 200)
+            bool photoLength = slider.Photo.PhotoLength(200);
+            if (!photoLength)
             {
                 ModelState.AddModelError("Photo", "Zehmet olmasa sheklin olchusu 200kb kechmesin");
                 return View();
@@ -113,21 +149,14 @@ namespace FiorelloFrontToBack.Areas.Admin.Controllers
             Slider SliderSelected = await _context.Sliders.FindAsync(id);
             if (SliderSelected == null) return NotFound();
 
-            string pathOldImage = Path.Combine(_env.WebRootPath, "img", SliderSelected.Image);
-            if (System.IO.File.Exists(pathOldImage))
+            bool isDeleted = Helper.DeletedPhoto(_env.WebRootPath, "img", SliderSelected);
+            if (!isDeleted)
             {
-                System.IO.File.Delete(pathOldImage);
+                ModelState.AddModelError("Photos", "Sistemde bash veren bir problemle bagli file siline bilmedi");
+                return View();
             }
 
-            string PhotoName = Guid.NewGuid().ToString() + slider.Photo.FileName;
-            SliderSelected.Image = PhotoName;
-           
-            string pathNewImage = Path.Combine(_env.WebRootPath, "img", PhotoName);
-            using (FileStream fileStream = new FileStream(pathNewImage, FileMode.Create))
-            {
-                await slider.Photo.CopyToAsync(fileStream);
-            }
-
+            SliderSelected.Image = await slider.Photo.AddImageAsync(_env.WebRootPath, "img");
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -138,6 +167,12 @@ namespace FiorelloFrontToBack.Areas.Admin.Controllers
             if (id == null) return NotFound();
             Slider slider = await _context.Sliders.FindAsync(id);
             if (slider == null) return NotFound();
+            int sliderCount = _context.Sliders.Count();
+            if (sliderCount <= 1)
+            {
+                ModelState.AddModelError("", "Sonuncu slideri sile bilmersiniz!");
+                return View(slider);
+            }
             return View(slider);
         }
 
@@ -150,13 +185,19 @@ namespace FiorelloFrontToBack.Areas.Admin.Controllers
             if (id == null) return NotFound();
             Slider slider = await _context.Sliders.FindAsync(id);
             if (slider == null) return NotFound();
-
+            int sliderCount = _context.Sliders.Count();
+            if (sliderCount <= 1)
+            {
+                ModelState.AddModelError("", "Sonuncu slideri sile bilmersiniz!");
+                return View(slider);
+            }
             _context.Sliders.Remove(slider);
 
-            string path = Path.Combine(_env.WebRootPath, "img", slider.Image);
-            if (System.IO.File.Exists(path))
+            bool isDeleted = Helper.DeletedPhoto(_env.WebRootPath, "img", slider);
+            if (!isDeleted)
             {
-                System.IO.File.Delete(path);
+                ModelState.AddModelError("", "Sistemde bash veren bir problemle bagli file siline bilmedi");
+                return View();
             }
 
             await _context.SaveChangesAsync();
