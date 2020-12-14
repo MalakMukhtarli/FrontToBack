@@ -1,7 +1,9 @@
 using FiorelloFrontToBack.DAL;
+using FiorelloFrontToBack.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +30,21 @@ namespace FiorelloFrontToBack
             {
                 option.IdleTimeout = TimeSpan.FromSeconds(20);
             });
+            services.AddIdentity<AppUser,IdentityRole>(identityOptions=> {
+                identityOptions.Password.RequiredLength = 8;
+                identityOptions.Password.RequiredUniqueChars = 1;
+                identityOptions.Password.RequireNonAlphanumeric = true;
+                identityOptions.Password.RequireLowercase = true;
+                identityOptions.Password.RequireUppercase = true;
+                identityOptions.Password.RequireDigit = true;
+
+                identityOptions.User.RequireUniqueEmail = true;
+
+                identityOptions.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                identityOptions.Lockout.MaxFailedAccessAttempts = 3;
+                identityOptions.Lockout.AllowedForNewUsers = true;
+
+            }).AddDefaultTokenProviders().AddEntityFrameworkStores<AppDbContext>();
             services.AddControllersWithViews();
             services.AddDbContext<AppDbContext>(option => {
                 option.UseSqlServer(_config["ConnectionString:Default"]);
@@ -45,7 +62,7 @@ namespace FiorelloFrontToBack
             app.UseSession();
             app.UseStaticFiles();
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

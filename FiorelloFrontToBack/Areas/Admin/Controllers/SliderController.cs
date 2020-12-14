@@ -86,7 +86,7 @@ namespace FiorelloFrontToBack.Areas.Admin.Controllers
             int sliderCount = _context.Sliders.Count();
             if (sliderCount + sliders.Photos.Length > 5)
             {
-                ModelState.AddModelError("Photos", "Butul filelarin sayi 5i keche bilmez!");
+                ModelState.AddModelError("Photos", "Putun fayllarin sayi 5i keche bilmez!");
                 return View();
             }
             foreach (IFormFile slider in sliders.Photos)
