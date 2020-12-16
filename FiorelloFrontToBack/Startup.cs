@@ -1,4 +1,5 @@
 using FiorelloFrontToBack.DAL;
+using FiorelloFrontToBack.Helpers;
 using FiorelloFrontToBack.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,10 +27,10 @@ namespace FiorelloFrontToBack
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSession(option =>
-            {
+            services.AddSession(option => {
                 option.IdleTimeout = TimeSpan.FromSeconds(20);
             });
+            services.AddControllersWithViews();
             services.AddIdentity<AppUser,IdentityRole>(identityOptions=> {
                 identityOptions.Password.RequiredLength = 8;
                 identityOptions.Password.RequiredUniqueChars = 1;
@@ -44,8 +45,11 @@ namespace FiorelloFrontToBack
                 identityOptions.Lockout.MaxFailedAccessAttempts = 3;
                 identityOptions.Lockout.AllowedForNewUsers = true;
 
-            }).AddDefaultTokenProviders().AddEntityFrameworkStores<AppDbContext>();
-            services.AddControllersWithViews();
+            }).AddDefaultTokenProviders()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddErrorDescriber<AzIdentityErrorDescriber>();
+
+            
             services.AddDbContext<AppDbContext>(option => {
                 option.UseSqlServer(_config["ConnectionString:Default"]);
             });
@@ -63,13 +67,13 @@ namespace FiorelloFrontToBack
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     "areas",
                     "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}"
                 );
-
                 endpoints.MapControllerRoute(
                     "default",
                     "{controller=Home}/{action=Index}/{id?}"

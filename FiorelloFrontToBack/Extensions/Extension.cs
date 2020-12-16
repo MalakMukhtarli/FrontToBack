@@ -49,4 +49,10 @@ namespace FiorelloFrontToBack.Extensions
             return PhotoName;
         }
     }
+
+    public enum Roles
+    {
+        Admin,
+        Member
+    }
 }

@@ -175,3 +175,7 @@ C:\Users\HP\Desktop\Code Academy\BackEnd\ASP.NET\p117-01-12-2020---asp-mvc-repea
 C:\Users\HP\Desktop\Code Academy\BackEnd\ASP.NET\p117-01-12-2020---asp-mvc-repeat-MalakMukhtarli\FiorelloFrontToBack\FiorelloFrontToBack\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs
 C:\Users\HP\Desktop\Code Academy\BackEnd\ASP.NET\p117-01-12-2020---asp-mvc-repeat-MalakMukhtarli\FiorelloFrontToBack\FiorelloFrontToBack\obj\Debug\netcoreapp3.1\Razor\Views\Account\Register.cshtml.g.cs
 C:\Users\HP\Desktop\Code Academy\BackEnd\ASP.NET\p117-01-12-2020---asp-mvc-repeat-MalakMukhtarli\FiorelloFrontToBack\FiorelloFrontToBack\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_ValidationPatial.cshtml.g.cs
+C:\Users\HP\Desktop\Code Academy\BackEnd\ASP.NET\p117-01-12-2020---asp-mvc-repeat-MalakMukhtarli\FiorelloFrontToBack\FiorelloFrontToBack\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\User\Index.cshtml.g.cs
+C:\Users\HP\Desktop\Code Academy\BackEnd\ASP.NET\p117-01-12-2020---asp-mvc-repeat-MalakMukhtarli\FiorelloFrontToBack\FiorelloFrontToBack\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\User\Activated.cshtml.g.cs
+C:\Users\HP\Desktop\Code Academy\BackEnd\ASP.NET\p117-01-12-2020---asp-mvc-repeat-MalakMukhtarli\FiorelloFrontToBack\FiorelloFrontToBack\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\User\ResetPassword.cshtml.g.cs
+C:\Users\HP\Desktop\Code Academy\BackEnd\ASP.NET\p117-01-12-2020---asp-mvc-repeat-MalakMukhtarli\FiorelloFrontToBack\FiorelloFrontToBack\obj\Debug\netcoreapp3.1\Razor\Areas\Admin\Views\User\ChangeRole.cshtml.g.cs
